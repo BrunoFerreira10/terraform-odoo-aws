@@ -1,0 +1,49 @@
+#!/bin/bash
+echo "### Iniciado user data ###"
+
+# Remove linhas antigas do /etc/fstab
+sed -i '/^fs-/d' /etc/fstab
+
+# Adicionar novos efs no /etc/fstab e monta o sistema de arquivos.
+echo "${efs-addons-mountpoint}:/ /mnt/efs/addons nfs defaults,_netdev 0 0" >> /etc/fstab
+echo "${efs-filestore-mountpoint}:/ /mnt/efs/filestore nfs defaults,_netdev 0 0" >> /etc/fstab
+echo "${efs-logs-mountpoint}:/ /mnt/efs/logs nfs defaults,_netdev 0 0" >> /etc/fstab
+mount -a
+
+# Ajustar dono do diretórios.
+chown -R odoo:odoo /mnt/efs/addons
+chown -R odoo:odoo /mnt/efs/filestore
+chown -R odoo:odoo /mnt/efs/logs  # Opcional
+
+# Ajustar permissões
+chmod -R 775 /mnt/efs/addons
+chmod -R 775 /mnt/efs/filestore
+chmod -R 775 /mnt/efs/logs  # Opcional
+
+# sudo -u odoo cp -rf /home/odoo/odoo/addons/* /mnt/efs/addons/
+
+# Remove /etc/odoo.conf antigo e adiciona o novo.
+rm /etc/odoo.conf
+touch /etc/odoo.conf
+bash -c 'cat <<EOF > /etc/odoo.conf
+[options]
+; Database operations password:
+# Senha de admin do odoo, para criar bancos de dados
+admin_passwd = 123456
+db_host = ${rds-postgres-endpoint}
+db_port = 5432
+# Usuario do RDS
+db_user = odoo
+# Mesma senha do RDS
+db_password = 12345678
+addons_path = /mnt/efs/addons
+data_dir = /mnt/efs/filestore
+logfile = /mnt/efs/logs/odoo.log
+
+EOF'
+
+# Atualiza dados do serviço e executar restart.
+systemctl daemon-reload
+systemctl restart odoo
+
+echo "### Finalizado user data ###"

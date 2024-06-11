@@ -1,0 +1,83 @@
+#!/bin/bash
+echo "### Iniciado user data ###"
+apt-get update -y
+apt-get upgrade -y
+
+apt-get install nfs-common -y
+apt install pip -y
+
+useradd -m -d /home/odoo -U -r -s /bin/bash odoo
+
+# mkdir -p /mnt/efs/addons
+mkdir -p /mnt/efs/addons
+mkdir -p /mnt/efs/filestore
+mkdir -p /mnt/efs/logs
+
+echo "${efs-addons-mountpoint}:/ /mnt/efs/addons nfs defaults,_netdev 0 0" >> /etc/fstab
+echo "${efs-filestore-mountpoint}:/ /mnt/efs/filestore nfs defaults,_netdev 0 0" >> /etc/fstab
+echo "${efs-logs-mountpoint}:/ /mnt/efs/logs nfs defaults,_netdev 0 0" >> /etc/fstab
+mount -a
+
+# Ajustar proprietário para o usuário e grupo 'odoo'
+chown -R odoo:odoo /mnt/efs/filestore
+chown -R odoo:odoo /mnt/efs/addons
+chown -R odoo:odoo /mnt/efs/logs  # Opcional
+
+# Ajustar permissões
+chmod -R 775 /mnt/efs/filestore
+chmod -R 775 /mnt/efs/addons
+chmod -R 775 /mnt/efs/logs  # Opcional
+
+cd /home/odoo
+
+sudo -u odoo git clone https://github.com/odoo/odoo.git /home/odoo/odoo
+
+#sudo -u ubuntu /bin/bash -c "git clone https://github.com/odoo/odoo.git /home/ubuntu/odoo"
+echo -e "#### debinstall $PWD"
+cd odoo
+sudo ./setup/debinstall.sh
+
+sudo -u odoo cp -rf /home/odoo/odoo/addons/* /mnt/efs/addons/
+
+#sudo env -C /home/ubuntu/odoo ./setup/debinstall.sh
+
+touch /etc/odoo.conf
+bash -c 'cat <<EOF > /etc/odoo.conf
+[options]
+; Database operations password:
+# Senha de admin do odoo, para criar bancos de dados
+admin_passwd = 123456
+db_host = ${rds-postgres-endpoint}
+db_port = 5432
+# Usuario do RDS
+db_user = odoo
+# Mesma senha do RDS
+db_password = 12345678
+addons_path = /mnt/efs/addons
+data_dir = /mnt/efs/filestore
+# logfile = /mnt/efs/logs
+
+EOF'
+
+#/home/odoo/odoo/odoo-bin --db_host=${rds-postgres-endpoint} --db_port=5432 -r odoo -w 12345678
+touch /etc/systemd/system/odoo.service
+bash -c 'cat <<EOF > /etc/systemd/system/odoo.service
+[Unit]
+Description=Odoo
+After=network.target
+[Service]
+Type=simple
+SyslogIdentifier=odoo
+PermissionsStartOnly=true
+User=odoo
+Group=odoo
+ExecStart=/home/odoo/odoo/odoo-bin -c /etc/odoo.conf
+StandardOutput=journal+console
+[Install]
+WantedBy=multi-user.target
+EOF'
+
+systemctl daemon-reload
+systemctl enable --now odoo
+
+echo "### Finalizado user data ###"

@@ -1,0 +1,76 @@
+#!/bin/bash
+echo "### Iniciado user data ###"
+apt update -y
+apt upgrade -y
+apt-get install nfs-common -y
+
+useradd -m -d /opt/odoo -U -r -s /bin/bash odoo
+
+mkdir /opt/odoo
+mkdir /etc/odoo
+
+echo "${efs-opt-mountpoint}:/ /opt/odoo nfs defaults,_netdev 0 0" >> /etc/fstab
+echo "${efs-etc-mountpoint}:/ /etc/odoo nfs defaults,_netdev 0 0" >> /etc/fstab
+mount -a
+
+chown odoo:odoo /opt/odoo
+
+apt install -y build-essential wget python3-dev python3-venv python3-wheel \
+  libfreetype6-dev libxml2-dev libzip-dev libldap2-dev libsasl2-dev \
+  python3-setuptools node-less libjpeg-dev zlib1g-dev libpq-dev libxslt1-dev \
+  libldap2-dev libtiff5-dev libjpeg8-dev libopenjp2-7-dev liblcms2-dev \
+  libwebp-dev libharfbuzz-dev libfribidi-dev libxcb1-dev
+
+# Bug fix para instalação do wkhtmltox
+wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+
+wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+apt install ./wkhtmltox_0.12.5-1.bionic_amd64.deb -y
+
+sudo -u odoo /bin/bash -c "git clone https://www.github.com/odoo/odoo --depth 1 --branch 17.0 /opt/odoo/odoo"
+sudo -u odoo /bin/bash -c "python3 -m venv /opt/odoo/odoo-venv"
+
+sudo -u odoo /bin/bash -c "source /opt/odoo/odoo-venv/bin/activate && pip3 install wheel"
+# Bug fix para instalação dos requirements.txt.
+sudo -u odoo /bin/bash -c "sed -i 's/greenlet==2.0.2/greenlet==3.0.3/g' /opt/odoo/odoo/requirements.txt"
+sudo -u odoo /bin/bash -c "source /opt/odoo/odoo-venv/bin/activate && pip3 install -r /opt/odoo/odoo/requirements.txt"
+sudo -u odoo /bin/bash -c "mkdir /opt/odoo/odoo-custom-addons"
+
+touch /etc/odoo/odoo.conf
+bash -c 'cat <<EOF > /etc/odoo/odoo.conf
+[options]
+; Database operations password:
+# Senha de admin do odoo, para criar bancos de dados
+admin_passwd = 123456
+db_host = ${rds-postgres-endpoint}
+db_port = 5432
+# Usuario do RDS
+db_user = odoo
+# Mesma senha do RDS
+db_password = 12345678
+addons_path = /opt/odoo/odoo/addons,/opt/odoo/odoo-custom-addons
+EOF'
+
+ln -s /etc/odoo/odoo.conf /etc/odoo.conf
+
+touch /etc/systemd/system/odoo.service
+bash -c 'cat <<EOF > /etc/systemd/system/odoo.service
+[Unit]
+Description=Odoo
+After=network.target
+[Service]
+Type=simple
+SyslogIdentifier=odoo
+PermissionsStartOnly=true
+User=odoo
+Group=odoo
+ExecStart=/opt/odoo/odoo-venv/bin/python3 /opt/odoo/odoo/odoo-bin -c /etc/odoo.conf
+StandardOutput=journal+console
+[Install]
+WantedBy=multi-user.target
+EOF'
+
+systemctl daemon-reload
+systemctl enable --now odoo
+echo "### Finalizado user data ###"
