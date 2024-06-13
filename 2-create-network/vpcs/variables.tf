@@ -6,7 +6,3 @@ variable "allowed-iplist" {
 variable "vpc-1-name" {
   type = string
 }
-
-variable "vpc-2-name" {
-  type = string
-}

@@ -16,18 +16,6 @@ terraform {
   }
 }
 
-# data "terraform_remote_state" "remote-state" {
-#   backend = "s3"
-#   config = {
-#     shared_credentials_files = ["~/aws-dev-cli-admin-credentials.txt"]
-#     profile = "default"
-
-#     region = "us-east-1"
-#     bucket = "remote-state-odoo"
-#     key    = "2-create-network/terraform.tfstate"
-#   }
-# }
-
 provider "aws" {
   region                   = var.regiao
   shared_credentials_files = ["~/aws-dev-cli-admin-credentials.txt"]
@@ -48,7 +36,6 @@ module "vpcs" {
 
   allowed-iplist = ["0.0.0.0/0"]
 
-  vpc-1-name = "vpc-ecommerce"
-  vpc-2-name = "vpc-vpn"
+  vpc-1-name = "vpc-odoo"  
 }
 

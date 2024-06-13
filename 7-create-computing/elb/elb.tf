@@ -5,10 +5,10 @@ resource "aws_lb_target_group" "tgrp-alb-odoo-ecommerce" {
   protocol = "HTTP"
   vpc_id   = data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-id
 
-  stickiness {
-    type            = "lb_cookie"
-    cookie_duration = 3600
-  }
+  # stickiness {
+  #   type            = "lb_cookie"
+  #   cookie_duration = 3600
+  # }
 
   health_check {
     enabled             = true
@@ -20,6 +20,8 @@ resource "aws_lb_target_group" "tgrp-alb-odoo-ecommerce" {
     unhealthy_threshold = 3
     matcher = "200-399"
   }  
+
+  deregistration_delay = 60  
 }
 
 // Application Load balancer
@@ -28,7 +30,7 @@ resource "aws_lb" "alb-odoo-ecommerce-prod" {
   internal           = false
   load_balancer_type = "application"
   security_groups = [
-    data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-sg-allow-all-id
+    data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-sg-alb-odoo-id
   ]
   subnets = [
     data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-subnet-public-1a-id,
@@ -49,11 +51,6 @@ resource "aws_lb_listener" "listener-http-alb-odoo-ecommerce-prod-1" {
   port              = "80"
   protocol          = "HTTP"
 
-  # default_action {
-  #   type             = "forward"
-  #   target_group_arn = aws_lb_target_group.tgrp-alb-odoo-ecommerce.arn
-  # }
-
   default_action {
     type = "redirect"
 
@@ -63,7 +60,6 @@ resource "aws_lb_listener" "listener-http-alb-odoo-ecommerce-prod-1" {
       status_code = "HTTP_301"
     }
   }
-
 }
 
 resource "aws_lb_listener_rule" "rule-fw-to-alb" {
@@ -90,11 +86,6 @@ resource "aws_lb_listener" "listener-https-alb-odoo-ecommerce-prod-1" {
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
   certificate_arn   = data.terraform_remote_state.remote-ssl-certificate.outputs.acm-acm-odoo-certificate-arn
 
-  # default_action {
-  #   type             = "forward"
-  #   target_group_arn = aws_lb_target_group.tgrp-alb-odoo-ecommerce.arn
-  # }
-
   default_action {
     type = "fixed-response"
 
@@ -109,27 +100,41 @@ resource "aws_lb_listener" "listener-https-alb-odoo-ecommerce-prod-1" {
 // Auto-scaling
 resource "aws_autoscaling_group" "asg-odoo-v1" {
 
-  vpc_zone_identifier = [
-    data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-subnet-private-1a-id,
-    data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-subnet-private-1b-id
-  ]
-
-  target_group_arns = [
-    aws_lb_target_group.tgrp-alb-odoo-ecommerce.arn
-  ]
-
-  health_check_grace_period = 60
-
+  // Group Details
   capacity_rebalance = true
-  desired_capacity   = 1
+  desired_capacity   = 2
   max_size           = 4
   min_size           = 1
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  // Launch template
   launch_template {
     id      = aws_launch_template.ltplt-odoo-v1.id
     version = "$Latest"
   }
 
+  // Network
+  vpc_zone_identifier = [
+    data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-subnet-private-1a-id,
+    data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-subnet-private-1b-id
+  ]    
+
+  // Load balancing
+  target_group_arns = [
+    aws_lb_target_group.tgrp-alb-odoo-ecommerce.arn
+  ]
+
+  // Health checks
+  health_check_type = "ELB"
+  health_check_grace_period = 60
+
+  // Advanced configuration
+  default_cooldown = 180
+
+  // Metrics
   enabled_metrics = [
     "GroupMinSize",
     "GroupMaxSize",
@@ -139,8 +144,5 @@ resource "aws_autoscaling_group" "asg-odoo-v1" {
   ]
 
   metrics_granularity = "1Minute"
-
-  lifecycle {
-    create_before_destroy = true
-  }
+  
 }

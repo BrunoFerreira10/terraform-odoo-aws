@@ -24,6 +24,6 @@ resource "aws_db_instance" "rds-1" {
   multi_az             = false
 
   vpc_security_group_ids = [
-    data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-sg-allow-all-id
+    data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-sg-rds-id
   ]
 }

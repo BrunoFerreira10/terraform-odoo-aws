@@ -9,14 +9,14 @@ resource "aws_launch_template" "ltplt-odoo-v1" {
   image_id = data.terraform_remote_state.remote-ami.outputs.ami-id
 
   // Instance type
-  instance_type = "t3a.small"
+  instance_type = "c7a.medium"
 
   // Key pair (login)
   key_name = "aws-dev-console-admin"
 
   // Network settings
   vpc_security_group_ids = [
-    data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-sg-allow-all-id
+    data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-sg-instances-id
   ]
 
   # security_group_names = [
@@ -59,8 +59,8 @@ resource "aws_launch_template" "ltplt-odoo-v1" {
   instance_initiated_shutdown_behavior = "terminate"
 
   monitoring {
-    enabled = false
-  }
+    enabled = true
+  }  
 
   // ebs_optimized = true
 }
