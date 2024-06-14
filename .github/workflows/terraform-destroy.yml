@@ -5,17 +5,17 @@ env:
   AWS_DEV_CLI_ADMIN_SECRET: ${{secrets.AWS_DEV_CLI_ADMIN_SECRET}}
   AWS_DEV_CLI_ADMIN_SSH_PUBLIC_KEY: ${{secrets.AWS_DEV_CLI_ADMIN_SSH_PUBLIC_KEY}}
 
-  jobs:
-    terraform_apply:
-      name: Terraform Destroy
-      runs-on: ubuntu-latest
-      defaults:
-        run: 
-          shell: bash
-      steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Terraform Destroy
-        run: |
-          terraform init
-          terraform destroy -auto-approve
+jobs:
+  terraform_apply:
+    name: Terraform Destroy
+    runs-on: ubuntu-latest
+    defaults:
+      run: 
+        shell: bash
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Terraform Destroy
+      run: |
+        terraform init
+        terraform destroy -auto-approve
