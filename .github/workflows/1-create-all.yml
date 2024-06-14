@@ -29,6 +29,14 @@ jobs:
         terraform init
         terraform plan
         terraform apply -auto-approve
+        cd ../4-create-base-ec2
+        terraform init
+        terraform plan
+        terraform apply -auto-approve
+        cd ../5-create-ami-optional
+        terraform init
+        terraform plan
+        terraform apply -auto-approve
         cd ../6-create-ssl-certificate
         terraform init
         terraform plan
