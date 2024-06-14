@@ -1,4 +1,4 @@
-name: 1-Build Remote State-Terraform Plan On Push
+name: 1-1-Build Remote State-Terraform Plan On Push
 on: push
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_DEV_CLI_ADMIN_KEY }}
