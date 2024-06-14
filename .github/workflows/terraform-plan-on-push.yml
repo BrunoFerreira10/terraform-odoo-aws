@@ -18,6 +18,9 @@ jobs:
     - name: Terraform plan
       run: |
         cd ./2-create-network
+        echo "######"
+        printenv
+        echo "######"
         terraform init
         terraform validate
         terraform plan
