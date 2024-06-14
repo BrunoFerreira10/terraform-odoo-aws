@@ -18,8 +18,8 @@ terraform {
 
 provider "aws" {
   region                   = var.regiao
-  shared_credentials_files = ["~/aws-dev-cli-admin-credentials.txt"]
-  profile                  = "default"
+  # shared_credentials_files = ["~/aws-dev-cli-admin-credentials.txt"]
+  # profile                  = "default"
 
   default_tags {
     tags = {
