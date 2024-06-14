@@ -1,0 +1,36 @@
+name: 2-Destroy All
+on: workflow_dispatch
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_DEV_CLI_ADMIN_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_DEV_CLI_ADMIN_SECRET }}
+  AWS_SSH_PUBLIC_KEY: ${{ secrets.AWS_DEV_CLI_ADMIN_SSH_PUBLIC_KEY }}
+
+jobs:
+  terraform_apply:
+    name: Terraform Destroy All
+    runs-on: ubuntu-latest
+    defaults:
+      run: 
+        shell: bash
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Terraform Destroy All
+      run: |
+        cd ./8.2-setup-rt53-cdn        
+        terraform destroy -auto-approve
+        cd ../7-create-computing
+        terraform destroy -auto-approve
+        cd ../6-create-ssl-certificate
+        terraform destroy -auto-approve
+        cd ../3.2-create-efs
+        terraform destroy -auto-approve
+        cd ../3.1-create-database
+        terraform destroy -auto-approve
+        cd ../2-create-network
+        terraform destroy -auto-approve
+        
+        
+        
+        
+        

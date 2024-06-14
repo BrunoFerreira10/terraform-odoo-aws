@@ -7,9 +7,6 @@ terraform {
     }
   }
   backend "s3" {
-    shared_credentials_files = ["~/aws-dev-cli-admin-credentials.txt"]
-    profile                  = "default"
-
     region = "us-east-1"
     bucket = "remote-state-odoo"
     key    = "setup-rt53-only/terraform.tfstate"
@@ -18,9 +15,6 @@ terraform {
 
 provider "aws" {
   region                   = var.regiao
-  shared_credentials_files = ["~/aws-dev-cli-admin-credentials.txt"]
-  profile                  = "default"
-
   default_tags {
     tags = {
       "owner"      = var.autor
