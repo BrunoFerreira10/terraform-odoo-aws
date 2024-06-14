@@ -12,7 +12,7 @@ data "terraform_remote_state" "remote-ami" {
   config = {
     region = "us-east-1"
     bucket = "remote-state-odoo"
-    key    = "update-ami-optional/terraform.tfstate"
+    key    = "create-ami-optional/terraform.tfstate"
   }
 }
 
