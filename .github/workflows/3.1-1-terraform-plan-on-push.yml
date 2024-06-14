@@ -1,0 +1,23 @@
+name: 3.1-1-Create Database-Terraform Plan On Push
+on: push
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_DEV_CLI_ADMIN_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_DEV_CLI_ADMIN_SECRET }}
+  AWS_SSH_PUBLIC_KEY: ${{ secrets.AWS_DEV_CLI_ADMIN_SSH_PUBLIC_KEY }}
+
+jobs:
+  terraform_plan:
+    name: Terraform Plan On Push
+    runs-on: ubuntu-latest
+    defaults:
+      run: 
+        shell: bash
+    steps:    
+    - name: Checkout
+      uses: actions/checkout@v4      
+    - name: Terraform plan
+      run: |
+        cd ./3.1-create-database      
+        terraform init
+        terraform validate
+        terraform plan
