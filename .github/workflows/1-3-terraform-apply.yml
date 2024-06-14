@@ -1,4 +1,4 @@
-name: Terraform Apply
+name: 1-Build Remote State-Terraform Apply
 on: workflow_dispatch
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_DEV_CLI_ADMIN_KEY }}
