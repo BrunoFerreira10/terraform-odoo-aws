@@ -7,6 +7,7 @@ terraform {
     }
   }
   backend "s3" {
+    profile = "default"
     region = "us-east-1"
     bucket = "remote-state-odoo"
     key    = "create-network/terraform.tfstate"
