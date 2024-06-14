@@ -18,9 +18,6 @@ jobs:
     - name: Terraform plan
       run: |
         cd ./1-build-remote-state
-        echo "######"
-        printenv | grep AWS
-        echo "######"
         terraform init
         terraform validate
         terraform plan

@@ -1,5 +1,5 @@
-name: 1-1-Build Remote State-Terraform Plan On Push
-on: push
+name: 2-2-Create Network-Terraform Plan Manual
+on: workflow_dispatch
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_DEV_CLI_ADMIN_KEY }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_DEV_CLI_ADMIN_SECRET }}
@@ -7,17 +7,17 @@ env:
 
 jobs:
   terraform_plan:
-    name: Terraform Plan On Push
+    name: Terraform Plan Manual
     runs-on: ubuntu-latest
     defaults:
       run: 
         shell: bash
-    steps:    
+    steps:
     - name: Checkout
-      uses: actions/checkout@v4      
+      uses: actions/checkout@v4
     - name: Terraform plan
       run: |
-        cd ./1-build-remote-state        
+        cd ./2-create-network
         terraform init
         terraform validate
         terraform plan
