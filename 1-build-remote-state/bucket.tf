@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "s3-remote-state" {
-  bucket = "remote-state-odoo"
+  bucket = "github-remote-state-odoo"
 }
 
 resource "aws_s3_bucket_versioning" "versionamento-s3-remote-state" {
