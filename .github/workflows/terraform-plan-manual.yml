@@ -7,7 +7,7 @@ env:
 
 jobs:
   terraform_plan:
-    name: Terraform Plan
+    name: Terraform Plan Manual
     runs-on: ubuntu-latest
     defaults:
       run: 

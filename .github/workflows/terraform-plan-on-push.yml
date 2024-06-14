@@ -7,7 +7,7 @@ env:
 
 jobs:
   terraform_plan:
-    name: Terraform Plan
+    name: Terraform Plan On Push
     runs-on: ubuntu-latest
     defaults:
       run: 

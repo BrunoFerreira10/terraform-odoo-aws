@@ -7,19 +7,19 @@ terraform {
     }
   }
   backend "s3" {
-    # shared_credentials_files = ["~/aws-dev-cli-admin-credentials.txt"]
-    # profile                  = "default"
+    access_key     = var.AWS_ACCESS_KEY_ID
+    secret_key     = var.AWS_SECRET_ACCESS_KEY
 
     region = "us-east-1"
     bucket = "remote-state-odoo"
     key    = "create-network/terraform.tfstate"
+    
   }
 }
 
-provider "aws" {
-  region                   = var.regiao
-  # shared_credentials_files = ["~/aws-dev-cli-admin-credentials.txt"]
-  # profile                  = "default"
+provider "aws" {  
+
+  region                   = var.regiao 
 
   default_tags {
     tags = {
