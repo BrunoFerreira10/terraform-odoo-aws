@@ -9,7 +9,7 @@ terraform {
   backend "s3" {
     region = "us-east-1"
     bucket = "remote-state-odoo"
-    key    = "github-create-network/terraform.tfstate"
+    key    = "create-network/terraform.tfstate"
     
   }
 }
