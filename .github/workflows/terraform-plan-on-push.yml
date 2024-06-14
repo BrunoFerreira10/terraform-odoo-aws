@@ -23,7 +23,7 @@ jobs:
       run: |
         cd ./2-create-network
         echo "######"
-        printenv
+        printenv | grep AWS
         echo "######"
         terraform init
         terraform validate
