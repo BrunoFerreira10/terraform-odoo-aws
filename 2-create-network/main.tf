@@ -7,8 +7,8 @@ terraform {
     }
   }
   backend "s3" {
-    shared_credentials_files = ["~/aws-dev-cli-admin-credentials.txt"]
-    profile                  = "default"
+    # shared_credentials_files = ["~/aws-dev-cli-admin-credentials.txt"]
+    # profile                  = "default"
 
     region = "us-east-1"
     bucket = "remote-state-odoo"
