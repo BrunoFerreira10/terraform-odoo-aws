@@ -19,6 +19,9 @@ resource "aws_cloudfront_cache_policy" "cache-policy-odoo-default" {
     query_strings_config {
       query_string_behavior = "all"
     }
+
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip = true    
   }
 
 }
@@ -198,6 +201,7 @@ resource "aws_cloudfront_distribution" "cloud-front-odoo" {
     # max_ttl                = 120
 
     allowed_methods = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    //cached_methods  = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
 
     // Managed-CachingDisabled
