@@ -1,9 +1,9 @@
 name: Terraform Plan
 on: workflow_dispatch
 env:
-  AWS_ACCESS_KEY_ID: ${{secrets.AWS_DEV_CLI_ADMIN_KEY}}
-  AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_DEV_CLI_ADMIN_SECRET}}
-  AWS_SSH_PUBLIC_KEY: ${{secrets.AWS_DEV_CLI_ADMIN_SSH_PUBLIC_KEY}}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_DEV_CLI_ADMIN_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_DEV_CLI_ADMIN_SECRET }}
+  AWS_SSH_PUBLIC_KEY: ${{ secrets.AWS_DEV_CLI_ADMIN_SSH_PUBLIC_KEY }}
 
 jobs:
   terraform_plan:
@@ -17,7 +17,10 @@ jobs:
       uses: actions/checkout@v4
     - name: Terraform plan
       run: |
-        cd ./2-create-network
+        cd ./1-build-remote-state
+        echo "######"
+        printenv | grep AWS
+        echo "######"
         terraform init
         terraform validate
         terraform plan
