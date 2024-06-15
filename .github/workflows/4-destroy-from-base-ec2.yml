@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v4
     - name: Terraform Destroy All
       run: |
-        cd ../4-create-base-ec2
+        cd ./4-create-base-ec2
         terraform init
         terraform destroy -auto-approve
         cd ../3.2-create-efs
