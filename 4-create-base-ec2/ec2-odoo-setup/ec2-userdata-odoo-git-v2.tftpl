@@ -43,7 +43,7 @@ echo -e "#### debinstall $PWD"
 cd odoo
 sudo ./setup/debinstall.sh
 
-sudo -u odoo sh -c 'mv -vf /home/odoo/odoo/addons/* /mnt/efs/addons/'
+sudo -u odoo sh -c 'mv -v /home/odoo/odoo/addons/* /mnt/efs/addons/'
 #sudo -u odoo mv -vrf /home/odoo/odoo/addons/* /mnt/efs/addons/
 #sudo env -C /home/ubuntu/odoo ./setup/debinstall.sh
 
@@ -86,8 +86,8 @@ EOF'
 systemctl daemon-reload
 systemctl enable --now odoo
 
-touch /tmp/userdata_finished
-sleep 60
-rm /tmp/userdata_finished
-
 echo "### Finalizado user data ###"
+
+touch /tmp/userdata_finished
+# sleep 60
+# rm /tmp/userdata_finished
