@@ -30,7 +30,7 @@ resource "aws_instance" "vm-1" {
   
   connection {
     type        = "ssh"
-    user        = "ec2-user"
+    user        = "ubuntu"
     private_key = "${var.AWS_SSH_PRIVATE_KEY}"
     host        = self.public_ip
   }
