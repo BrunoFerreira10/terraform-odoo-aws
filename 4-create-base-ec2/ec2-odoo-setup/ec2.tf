@@ -26,7 +26,15 @@ resource "aws_instance" "vm-1" {
     }
   )
 
+  provisioner "remote-exec" {
+    inline = [      
+      "while [ ! -f /tmp/userdata_finished ]; do sleep 5; done",
+      "tail -n 20 /var/log/cloud-init-output.log",
+    ]
+  }  
+
   tags = {
     Name = "vm-odoo-setup"
   }
 }
+

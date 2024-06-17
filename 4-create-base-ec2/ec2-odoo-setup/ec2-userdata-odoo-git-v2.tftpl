@@ -1,5 +1,6 @@
 #!/bin/bash
 echo "### Iniciado user data ###"
+
 apt-get update -y
 apt-get upgrade -y
 
@@ -79,5 +80,9 @@ EOF'
 
 systemctl daemon-reload
 systemctl enable --now odoo
+
+touch /tmp/userdata_finished
+sleep 20
+rm /tmp/userdata_finished
 
 echo "### Finalizado user data ###"
