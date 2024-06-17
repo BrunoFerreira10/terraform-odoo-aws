@@ -39,14 +39,14 @@ resource "aws_network_acl" "vpc-1-nacl-private-subnets" {
     cidr_block = "0.0.0.0/0"    
   }
 
-  ingress {    
-    rule_no    = 300
-    protocol   = "tcp"
-    from_port  = 2049
-    to_port    = 2049
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"    
-  }
+  # ingress {    
+  #   rule_no    = 300
+  #   protocol   = "tcp"
+  #   from_port  = 2049
+  #   to_port    = 2049
+  #   action     = "allow"
+  #   cidr_block = "0.0.0.0/0"    
+  # }
 
   ingress {    
     rule_no    = 10000
