@@ -16,11 +16,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Set up SSH agent
-      uses: webfactory/ssh-agent@v0.5.3
+      uses: webfactory/ssh-agent@v0.9.0
       with:
         ssh-private-key: ${{ secrets.AWS_DEV_CLI_ADMIN_SSH_PRIVATE_KEY }}
     - name: Terraform Apply
       run: |
         cd ./4-create-base-ec2
-        terraform init
-        TF_VAR_AWS_SSH_PRIVATE_KEY=${{ secrets.AWS_DEV_CLI_ADMIN_SSH_PRIVATE_KEY }} terraform apply -auto-approve
+        terraform init        
+        terraform apply -auto-approve
+
+
+# TF_VAR_AWS_SSH_PRIVATE_KEY=${{ secrets.AWS_DEV_CLI_ADMIN_SSH_PRIVATE_KEY }} terraform apply -auto-approve        
