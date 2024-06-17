@@ -28,22 +28,22 @@ resource "aws_instance" "vm-1" {
 
   provisioner "remote-exec" {
   
-  connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    private_key = "${var.AWS_SSH_PRIVATE_KEY}"
-    host        = self.public_ip
-  }
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${var.AWS_SSH_PRIVATE_KEY}"
+      host        = self.public_ip
+    }
 
-  inline = [
-    "while [ ! -f /tmp/userdata_finished ]; do",
-    "echo 'Aguardando o arquivo /tmp/userdata_finished'",
-    "ls -la /tmp",
-    "ls -la /mnt/efs",
-    "sleep 5",
-    "done"
-  ]
-}
+    inline = [
+      "while [ ! -f /tmp/userdata_finished ]; do",
+      "echo 'Aguardando o arquivo /tmp/userdata_finished'",
+      "ls -la /tmp",
+      "ls -la /mnt/efs",
+      "sleep 5",
+      "done"
+    ]
+  }
 
   tags = {
     Name = "vm-odoo-setup"
