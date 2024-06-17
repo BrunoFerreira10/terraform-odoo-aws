@@ -27,6 +27,14 @@ resource "aws_instance" "vm-1" {
   )
 
   provisioner "remote-exec" {
+
+    connection {
+      type        = "ssh"  # Tipo de conexão SSH para Linux
+      user        = "ubuntu"  # Usuário SSH da instância
+      # private_key = file("/path/to/your/private_key.pem")  # Caminho para a chave privada SSH
+      host        = self.public_ip  # IP público da instância
+    }
+
     inline = [      
       "while [ ! -f /tmp/userdata_finished ]; do sleep 5; done",
       "tail -n 20 /var/log/cloud-init-output.log",
