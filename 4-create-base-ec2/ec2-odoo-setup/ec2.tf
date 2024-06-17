@@ -35,14 +35,14 @@ resource "aws_instance" "vm-1" {
     host        = self.public_ip
   }
 
-  inline = <<-EOT
-    while [ ! -f /tmp/userdata_finished ]; do
-      echo 'Aguardando o arquivo /tmp/userdata_finished'
-      ls -la /tmp
-      ls -la /mnt/efs
-      sleep 5
-    done
-  EOT
+  inline = [
+    "while [ ! -f /tmp/userdata_finished ]; do",
+    "echo 'Aguardando o arquivo /tmp/userdata_finished'",
+    "ls -la /tmp",
+    "ls -la /mnt/efs",
+    "sleep 5",
+    "done"
+  ]
 }
 
   tags = {
