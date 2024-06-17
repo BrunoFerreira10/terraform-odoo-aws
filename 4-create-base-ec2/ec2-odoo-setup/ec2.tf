@@ -31,7 +31,7 @@ resource "aws_instance" "vm-1" {
     connection {
       type        = "ssh"  # Tipo de conexão SSH para Linux
       user        = "ubuntu"  # Usuário SSH da instância
-      # private_key = file("/path/to/your/private_key.pem")  # Caminho para a chave privada SSH
+      agent       = true
       host        = self.public_ip  # IP público da instância
     }
 
