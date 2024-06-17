@@ -119,6 +119,24 @@ resource "aws_network_acl" "vpc-1-nacl-public-subnets" {
     cidr_block = "0.0.0.0/0"    
   }
 
+  ingress {    
+    rule_no    = 200
+    protocol   = "tcp"
+    from_port  = 80
+    to_port    = 80
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"    
+  }
+
+  ingress {    
+    rule_no    = 300
+    protocol   = "tcp"
+    from_port  = 443
+    to_port    = 443
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"    
+  }
+
   # egress {
   #   rule_no    = 200
   #   protocol   = "tcp"
