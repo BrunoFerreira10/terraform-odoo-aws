@@ -37,7 +37,7 @@ echo -e "#### debinstall $PWD"
 cd odoo
 sudo ./setup/debinstall.sh
 
-sudo -u odoo cp -rf /home/odoo/odoo/addons/* /mnt/efs/addons/
+sudo -u odoo cp -vrf /home/odoo/odoo/addons/* /mnt/efs/addons/
 
 #sudo env -C /home/ubuntu/odoo ./setup/debinstall.sh
 
