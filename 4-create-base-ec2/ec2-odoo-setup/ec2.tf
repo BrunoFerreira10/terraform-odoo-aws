@@ -25,23 +25,15 @@ resource "aws_instance" "vm-1" {
       rds-postgres-endpoint    = split(":", data.terraform_remote_state.remote-state-rds-postgres.outputs.rds-postgres-rds-1-endpoint)[0]
     }
   )
-  
+
+  provisioner "local-exec" {
+    command = "while [ ! -f /tmp/userdata_finished ]; do sleep 5; done"
+  }
+
   tags = {
     Name = "vm-odoo-setup"
   }
 }
 
-# Recurso null_resource para aguardar o término do user_data
-resource "null_resource" "wait_userdata_completion" {
-  triggers = {
-    instance_id = aws_instance.vm-1.id  # Espera até que o ID da instância seja atribuído
-  }
 
-  # Aguarda até que o arquivo /tmp/userdata_finished seja criado na instância
-  provisioner "local-exec" {
-    command = "aws ec2 wait instance-status-ok --instance-ids ${aws_instance.vm-1.id}"
-  }
-
-  depends_on = [aws_instance.vm-1]  # Garante que este recurso espere a conclusão da instância
-}
 
