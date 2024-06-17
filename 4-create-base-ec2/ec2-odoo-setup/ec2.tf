@@ -26,20 +26,14 @@ resource "aws_instance" "vm-1" {
     }
   )
 
-  provisioner "remote-exec" {
-
-    connection {
-      type        = "ssh"  # Tipo de conexão SSH para Linux
-      user        = "ubuntu"  # Usuário SSH da instância
-      agent       = true
-      host        = self.public_ip  # IP público da instância
-    }
-
-    inline = [      
-      "while [ ! -f /tmp/userdata_finished ]; do sleep 5; done",
-      "tail -n 20 /var/log/cloud-init-output.log",
-    ]
-  }  
+  provisioner "local-exec" {
+    command = <<EOT
+      # Comandos a serem executados localmente após a criação da instância
+      sleep 5  # Simula um comando que aguarda a conclusão da criação da instância
+      echo "Execução local após a criação da instância"
+      tail -n 20 /var/log/cloud-init-output.log
+    EOT
+  } 
 
   tags = {
     Name = "vm-odoo-setup"
