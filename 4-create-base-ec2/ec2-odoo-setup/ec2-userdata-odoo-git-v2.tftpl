@@ -4,7 +4,8 @@ echo "### Iniciado user data ###"
 apt-get update -y
 apt-get upgrade -y
 
-apt-get install nfs-common -y
+apt install awscli -y
+apt install nfs-common -y
 apt install pip -y
 
 useradd -m -d /home/odoo -U -r -s /bin/bash odoo
