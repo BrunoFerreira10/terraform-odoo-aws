@@ -2,12 +2,12 @@
 echo "### Iniciado user data ###"
 
 apt-get update -y
-apt-get upgrade -y
+# apt-get upgrade -y
 
-apt install curl unzip -y
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-./aws/install
+# apt install curl unzip -y
+# curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+# unzip awscliv2.zip
+# ./aws/install
 
 apt install nfs-common -y
 apt install pip -y
@@ -36,7 +36,7 @@ chmod -R 775 /mnt/efs/logs  # Opcional
 
 cd /home/odoo
 
-sudo -u odoo git clone https://github.com/odoo/odoo.git --depth 1 --branch 17.0 /home/odoo/odoo
+sudo -u odoo git clone https://github.com/odoo/odoo.git /home/odoo/odoo
 
 #sudo -u ubuntu /bin/bash -c "git clone https://github.com/odoo/odoo.git /home/ubuntu/odoo"
 echo -e "#### debinstall $PWD"
@@ -61,7 +61,7 @@ db_user = odoo
 db_password = 12345678
 addons_path = /mnt/efs/addons
 data_dir = /mnt/efs/filestore
-# logfile = /mnt/efs/logs
+logfile = /mnt/efs/logs/odoo.log
 
 EOF'
 
@@ -87,7 +87,7 @@ systemctl daemon-reload
 systemctl enable --now odoo
 
 touch /tmp/userdata_finished
-sleep 20
+sleep 60
 rm /tmp/userdata_finished
 
 echo "### Finalizado user data ###"
