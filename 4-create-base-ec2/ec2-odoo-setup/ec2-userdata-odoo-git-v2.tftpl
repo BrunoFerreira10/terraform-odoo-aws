@@ -36,15 +36,15 @@ chmod -R 775 /mnt/efs/logs  # Opcional
 
 cd /home/odoo
 
-sudo -u odoo git clone https://github.com/odoo/odoo.git /home/odoo/odoo
+sudo -u odoo git clone https://github.com/odoo/odoo.git --depth 1 --branch 17.0 /home/odoo/odoo
 
 #sudo -u ubuntu /bin/bash -c "git clone https://github.com/odoo/odoo.git /home/ubuntu/odoo"
 echo -e "#### debinstall $PWD"
 cd odoo
 sudo ./setup/debinstall.sh
 
-sudo -u odoo mv -vrf /home/odoo/odoo/addons/* /mnt/efs/addons/
-
+sudo -u odoo sh -c 'mv -vf /home/odoo/odoo/addons/* /mnt/efs/addons/'
+#sudo -u odoo mv -vrf /home/odoo/odoo/addons/* /mnt/efs/addons/
 #sudo env -C /home/ubuntu/odoo ./setup/debinstall.sh
 
 touch /etc/odoo.conf
