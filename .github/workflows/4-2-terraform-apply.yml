@@ -15,6 +15,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Set up SSH agent
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.AWS_DEV_CLI_ADMIN_SSH_PRIVATE_KEY }}
     - name: Terraform Apply
       run: |
         cd ./4-create-base-ec2
