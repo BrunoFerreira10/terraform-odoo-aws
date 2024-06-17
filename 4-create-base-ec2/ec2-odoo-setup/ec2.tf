@@ -26,8 +26,16 @@ resource "aws_instance" "vm-1" {
     }
   )
 
-  provisioner "local-exec" {
-  command = <<-EOT
+  provisioner "remote-exec" {
+  
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = "${var.AWS_SSH_PRIVATE_KEY}"
+    host        = self.public_ip
+  }
+
+  inline = <<-EOT
     while [ ! -f /tmp/userdata_finished ]; do
       echo 'Aguardando o arquivo /tmp/userdata_finished'
       ls -la /tmp
