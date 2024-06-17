@@ -18,7 +18,7 @@ resource "aws_instance" "vm-1" {
 
   user_data_replace_on_change = true
   user_data = templatefile(
-    "${path.module}/ec2-userdata-odoo-git-v2.tftpl", {
+    "${path.module}/ec2-userdata-odoo-git.tftpl", {
       efs-addons-mountpoint    = data.terraform_remote_state.remote-state-efs.outputs.efs-addons-endpoint,
       efs-filestore-mountpoint = data.terraform_remote_state.remote-state-efs.outputs.efs-filestore-endpoint,
       efs-logs-mountpoint      = data.terraform_remote_state.remote-state-efs.outputs.efs-logs-endpoint,
@@ -27,8 +27,15 @@ resource "aws_instance" "vm-1" {
   )
 
   provisioner "local-exec" {
-    command = "while [ ! -f /tmp/userdata_finished ]; do sleep 5; done"
-  }
+  command = <<-EOT
+    while [ ! -f /tmp/userdata_finished ]; do
+      echo 'Aguardando o arquivo /tmp/userdata_finished'
+      ls -la /tmp
+      ls -la /mnt/efs
+      sleep 5
+    done
+  EOT
+}
 
   tags = {
     Name = "vm-odoo-setup"
