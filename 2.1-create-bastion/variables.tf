@@ -32,3 +32,9 @@ variable "remote-state-bucket" {
   type        = string
   description = "Bucket name onde está o remote state"
 }
+
+variable "AWS_SSH_PRIVATE_KEY" {
+  description = "Chave privada SSH para conexão"
+  type        = string  
+  sensitive = true
+}

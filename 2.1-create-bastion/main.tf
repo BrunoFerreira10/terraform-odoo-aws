@@ -27,4 +27,5 @@ provider "aws" {
 
 module "vm-bastion" {
   source = "./vm-bastion"
+  AWS_SSH_PRIVATE_KEY = var.AWS_SSH_PRIVATE_KEY  
 }

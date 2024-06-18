@@ -1,8 +1,7 @@
 resource "aws_instance" "vm-bastion" {
   # Ubuntu Server 24.04 LTS (HVM), SSD Volume Type
   ami = "ami-04b70fa74e45c3917"
-  # Apenas odoo
-  #ami           = "ami-05e382370b66343e8"
+
   instance_type = "t3a.large"
   key_name      = "aws-dev-console-admin"
   subnet_id     = data.terraform_remote_state.remote-state-vpc.outputs.vpcs-vpc-1-subnet-public-1a-id
@@ -19,29 +18,12 @@ resource "aws_instance" "vm-bastion" {
   user_data_replace_on_change = true
   user_data = templatefile(
     "${path.module}/ec2-userdata.tftpl", {
-      private_key = var.AWS_SSH_PRIVATE_KEY
+      private-key = var.AWS_SSH_PRIVATE_KEY
     }
-  )
-
-  provisioner "remote-exec" {
-  
-    # connection {
-    #   type        = "ssh"
-    #   user        = "ubuntu"
-    #   private_key = "${var.AWS_SSH_PRIVATE_KEY}"
-    #   host        = self.public_ip
-    # }
-
-    inline = [
-      "while [ ! -f /tmp/userdata_finished ]; do",
-      "tail -n 10 /var/log/cloud-init-output.log",
-      "sleep 15",
-      "done"
-    ]
-  }
+  )  
 
   tags = {
-    Name = "vm-odoo-setup"
+    Name = "vm-bastion-host"
   }
 }
 
