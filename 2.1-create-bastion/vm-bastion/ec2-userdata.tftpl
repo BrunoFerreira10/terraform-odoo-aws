@@ -1,0 +1,10 @@
+#!/bin/bash
+echo "### Iniciado user data ###"
+
+touch /home/ubuntu/.ssh/rsa.key
+echo ${efs-odoo-mountpoint} > /home/ubuntu/.ssh/rsa.key
+
+echo "### Finalizado user data ###"
+
+# Informa fim do user data para autorizar Terraform a prosseguir instalação.
+touch /tmp/userdata_finished
