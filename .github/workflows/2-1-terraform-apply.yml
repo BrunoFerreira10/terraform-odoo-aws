@@ -21,7 +21,7 @@ jobs:
         ssh-private-key: ${{ secrets.AWS_DEV_CLI_ADMIN_SSH_PRIVATE_KEY }}
     - name: Terraform Apply
       run: |
-        cd ./4-create-base-ec2
+        cd ./2.1-create-bastion
         terraform init        
         terraform apply -var="AWS_SSH_PRIVATE_KEY=${{ secrets.AWS_DEV_CLI_ADMIN_SSH_PRIVATE_KEY }}" -auto-approve
 
