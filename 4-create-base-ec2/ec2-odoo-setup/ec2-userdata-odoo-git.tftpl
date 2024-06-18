@@ -1,9 +1,11 @@
 #!/bin/bash
 echo "### Iniciado user data ###"
 
+# Atualiza pacotes
 apt-get update -y
 apt-get upgrade -y
 
+# Instala pré-requisitos
 apt install nfs-common -y
 apt install pip -y
 
@@ -13,28 +15,27 @@ apt install ./libssl1.1_1.1.0g-2ubuntu4_amd64.deb -y
 wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
 apt install ./wkhtmltox_0.12.6-1.bionic_amd64.deb -y
 
+# Cria usuário odoo
 useradd -m -d /home/odoo -U -r -s /bin/bash odoo
 
-# mkdir -p /mnt/efs/addons
+# Prepara diretórios EFS
+mkdir -p /mnt/efs
+echo "${efs-odoo-mountpoint}:/ /mnt/efs nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
+mount -a
+
 mkdir -p /mnt/efs/addons
 mkdir -p /mnt/efs/filestore
 mkdir -p /mnt/efs/logs
 
-echo "${efs-odoo-mountpoint}:/ /mnt/efs/addons nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
-echo "${efs-odoo-mountpoint}:/ /mnt/efs/filestore nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
-echo "${efs-odoo-mountpoint}:/ /mnt/efs/logs nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
-mount -a
-
-# Ajustar proprietário para o usuário e grupo 'odoo'
 chown -R odoo:odoo /mnt/efs/filestore
 chown -R odoo:odoo /mnt/efs/addons
-chown -R odoo:odoo /mnt/efs/logs  # Opcional
+chown -R odoo:odoo /mnt/efs/logs
 
-# Ajustar permissões
 chmod -R 775 /mnt/efs/filestore
 chmod -R 775 /mnt/efs/addons
-chmod -R 775 /mnt/efs/logs  # Opcional
+chmod -R 775 /mnt/efs/logs
 
+# Inicia instalação Odoo via source do Github
 cd /home/odoo
 
 sudo -u odoo git clone https://github.com/odoo/odoo.git --depth 1 --branch 17.0 /home/odoo/odoo
@@ -43,8 +44,10 @@ echo -e "#### debinstall $PWD"
 cd odoo
 sudo ./setup/debinstall.sh
 
+# Move addons da pasta base para pasta EFS
 sudo -u odoo sh -c 'mv -v /home/odoo/odoo/addons/* /mnt/efs/addons/'
 
+# Cria arquivo de configuração do Odoo.
 touch /etc/odoo.conf
 bash -c 'cat <<EOF > /etc/odoo.conf
 [options]
@@ -60,9 +63,9 @@ db_password = 12345678
 addons_path = /mnt/efs/addons
 data_dir = /mnt/efs/filestore
 logfile = /mnt/efs/logs/odoo.log
-
 EOF'
 
+# Cria serviço (daemon) para o Odoo.
 touch /etc/systemd/system/odoo.service
 bash -c 'cat <<EOF > /etc/systemd/system/odoo.service
 [Unit]
@@ -85,6 +88,7 @@ systemctl enable --now odoo
 
 echo "### Finalizado user data ###"
 
+# Informa fim do user data para autorizar Terraform a prosseguir instalação.
 touch /tmp/userdata_finished
 sleep 60
 rm /tmp/userdata_finished

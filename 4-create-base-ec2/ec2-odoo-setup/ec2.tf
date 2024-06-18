@@ -35,7 +35,7 @@ resource "aws_instance" "vm-1" {
 
     inline = [
       "while [ ! -f /tmp/userdata_finished ]; do",
-      "tail -n /var/log/cloud-init-output.log",
+      "tail -n 10 /var/log/cloud-init-output.log",
       "sleep 15",
       "done"
     ]
