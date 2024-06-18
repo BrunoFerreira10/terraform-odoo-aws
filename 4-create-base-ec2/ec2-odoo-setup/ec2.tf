@@ -19,9 +19,7 @@ resource "aws_instance" "vm-1" {
   user_data_replace_on_change = true
   user_data = templatefile(
     "${path.module}/ec2-userdata-odoo-git.tftpl", {
-      efs-addons-mountpoint    = data.terraform_remote_state.remote-state-efs.outputs.efs-addons-endpoint,
-      efs-filestore-mountpoint = data.terraform_remote_state.remote-state-efs.outputs.efs-filestore-endpoint,
-      efs-logs-mountpoint      = data.terraform_remote_state.remote-state-efs.outputs.efs-logs-endpoint,
+      efs-odoo-mountpoint    = data.terraform_remote_state.remote-state-efs.outputs.efs-odoo-endpoint,
       rds-postgres-endpoint    = split(":", data.terraform_remote_state.remote-state-rds-postgres.outputs.rds-postgres-rds-1-endpoint)[0]
     }
   )
@@ -37,10 +35,8 @@ resource "aws_instance" "vm-1" {
 
     inline = [
       "while [ ! -f /tmp/userdata_finished ]; do",
-      "echo 'Aguardando o arquivo /tmp/userdata_finished'",
-      "ls -la /tmp",
-      "ls -la /mnt/efs",
-      "sleep 5",
+      "tail -n /var/log/cloud-init-output.log",
+      "sleep 15",
       "done"
     ]
   }

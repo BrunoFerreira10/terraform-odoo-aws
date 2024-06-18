@@ -2,12 +2,7 @@
 echo "### Iniciado user data ###"
 
 apt-get update -y
-# apt-get upgrade -y
-
-# apt install curl unzip -y
-# curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-# unzip awscliv2.zip
-# ./aws/install
+apt-get upgrade -y
 
 apt install nfs-common -y
 apt install pip -y
@@ -25,11 +20,9 @@ mkdir -p /mnt/efs/addons
 mkdir -p /mnt/efs/filestore
 mkdir -p /mnt/efs/logs
 
-echo "${efs-addons-mountpoint}:/ /mnt/efs/addons nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
-echo "${efs-addons-mountpoint}:/ /mnt/efs/filestore nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
-echo "${efs-addons-mountpoint}:/ /mnt/efs/logs nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
-# echo "${efs-filestore-mountpoint}:/ /mnt/efs/filestore nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
-# echo "${efs-logs-mountpoint}:/ /mnt/efs/logs nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
+echo "${efs-odoo-mountpoint}:/ /mnt/efs/addons nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
+echo "${efs-odoo-mountpoint}:/ /mnt/efs/filestore nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
+echo "${efs-odoo-mountpoint}:/ /mnt/efs/logs nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
 mount -a
 
 # Ajustar proprietário para o usuário e grupo 'odoo'
@@ -46,14 +39,11 @@ cd /home/odoo
 
 sudo -u odoo git clone https://github.com/odoo/odoo.git --depth 1 --branch 17.0 /home/odoo/odoo
 
-#sudo -u ubuntu /bin/bash -c "git clone https://github.com/odoo/odoo.git /home/ubuntu/odoo"
 echo -e "#### debinstall $PWD"
 cd odoo
 sudo ./setup/debinstall.sh
 
 sudo -u odoo sh -c 'mv -v /home/odoo/odoo/addons/* /mnt/efs/addons/'
-#sudo -u odoo mv -vrf /home/odoo/odoo/addons/* /mnt/efs/addons/
-#sudo env -C /home/ubuntu/odoo ./setup/debinstall.sh
 
 touch /etc/odoo.conf
 bash -c 'cat <<EOF > /etc/odoo.conf
@@ -73,7 +63,6 @@ logfile = /mnt/efs/logs/odoo.log
 
 EOF'
 
-#/home/odoo/odoo/odoo-bin --db_host=${rds-postgres-endpoint} --db_port=5432 -r odoo -w 12345678
 touch /etc/systemd/system/odoo.service
 bash -c 'cat <<EOF > /etc/systemd/system/odoo.service
 [Unit]
@@ -97,5 +86,5 @@ systemctl enable --now odoo
 echo "### Finalizado user data ###"
 
 touch /tmp/userdata_finished
-# sleep 60
-# rm /tmp/userdata_finished
+sleep 60
+rm /tmp/userdata_finished
