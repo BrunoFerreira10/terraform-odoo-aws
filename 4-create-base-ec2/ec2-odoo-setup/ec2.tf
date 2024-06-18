@@ -26,12 +26,13 @@ resource "aws_instance" "vm-1" {
 
   provisioner "remote-exec" {
   
-    # connection {
-    #   type        = "ssh"
-    #   user        = "ubuntu"
-    #   private_key = "${var.AWS_SSH_PRIVATE_KEY}"
-    #   host        = self.public_ip
-    # }
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${var.AWS_SSH_PRIVATE_KEY}"
+      host        = self.public_ip
+      timeout     = 600
+    }
 
     inline = [
       "while [ ! -f /tmp/userdata_finished ]; do",
