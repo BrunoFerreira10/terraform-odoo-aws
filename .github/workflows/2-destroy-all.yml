@@ -26,6 +26,12 @@ jobs:
         cd ../6-create-ssl-certificate
         terraform init
         terraform destroy -auto-approve
+        cd cd ../5-create-ami-optional
+        terraform init
+        terraform destroy -auto-approve
+        cd ../4-create-base-ec2
+        terraform init
+        terraform destroy -auto-approve
         cd ../3.2-create-efs
         terraform init
         terraform destroy -auto-approve
