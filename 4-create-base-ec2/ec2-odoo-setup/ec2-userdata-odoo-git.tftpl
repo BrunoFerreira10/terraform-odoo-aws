@@ -23,16 +23,16 @@ mkdir -p /mnt/efs
 echo "${efs-odoo-mountpoint}:/ /mnt/efs nfs nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0" >> /etc/fstab
 mount -a
 
-mkdir -p /mnt/efs/addons
+# mkdir -p /mnt/efs/addons
 mkdir -p /mnt/efs/filestore
 mkdir -p /mnt/efs/logs
 
 chown -R odoo:odoo /mnt/efs/filestore
-chown -R odoo:odoo /mnt/efs/addons
+# chown -R odoo:odoo /mnt/efs/addons
 chown -R odoo:odoo /mnt/efs/logs
 
 chmod -R 775 /mnt/efs/filestore
-chmod -R 775 /mnt/efs/addons
+# chmod -R 775 /mnt/efs/addons
 chmod -R 775 /mnt/efs/logs
 
 # Inicia instalação Odoo via source do Github
@@ -45,7 +45,10 @@ cd odoo
 sudo ./setup/debinstall.sh
 
 # Move addons da pasta base para pasta EFS
-sudo -u odoo sh -c 'mv -v /home/odoo/odoo/addons/* /mnt/efs/addons/'
+sudo -u odoo sh -c 'mv -v /home/odoo/odoo/addons /mnt/efs'
+chown -R odoo:odoo /mnt/efs/addons
+chmod -R 775 /mnt/efs/addons
+# sudo -u odoo sh -c 'mv -v /home/odoo/odoo/addons/* /mnt/efs/addons/'
 
 # Cria arquivo de configuração do Odoo.
 touch /etc/odoo.conf
