@@ -2,7 +2,8 @@
 echo "### Iniciado user data ###"
 
 touch /home/ubuntu/.ssh/rsa.key
-echo ${private-key} >> /home/ubuntu/.ssh/rsa.key
+chmod 600 /home/ubuntu/.ssh/rsa.key
+echo "${private_key_base64}" | base64 -d >> /home/ubuntu/.ssh/rsa.key
 
 echo "### Finalizado user data ###"
 

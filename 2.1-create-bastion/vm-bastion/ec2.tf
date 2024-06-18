@@ -18,7 +18,7 @@ resource "aws_instance" "vm-bastion" {
   user_data_replace_on_change = true
   user_data = templatefile(
     "${path.module}/ec2-userdata.tftpl", {
-      private-key = var.AWS_SSH_PRIVATE_KEY
+      private_key_base64 = base64encode(var.AWS_SSH_PRIVATE_KEY)
     }
   )  
 
