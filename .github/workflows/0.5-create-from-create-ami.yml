@@ -29,7 +29,7 @@ jobs:
         terraform init
         terraform plan
         terraform apply -auto-approve
-        cd ../8.2-setup-rt53-cdn
+        cd ../8.1-setup-rt53-only
         terraform init
         terraform plan
         terraform apply -auto-approve

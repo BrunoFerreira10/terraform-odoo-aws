@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v4
     - name: Terraform Destroy All
       run: |
-        cd ./8.2-setup-rt53-cdn   
+        cd ./8.1-setup-rt53-only   
         terraform init     
         terraform destroy -auto-approve
         cd ../7-create-computing
