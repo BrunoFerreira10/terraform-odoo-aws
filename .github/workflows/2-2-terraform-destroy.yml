@@ -1,4 +1,4 @@
-name: 2-2-Create Bastion-Terraform Destroy
+name: 2-2-Create Network-Terraform Destroy
 on: workflow_dispatch
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_DEV_CLI_ADMIN_KEY }}
@@ -17,6 +17,6 @@ jobs:
       uses: actions/checkout@v4
     - name: Terraform Destroy
       run: |
-        cd ./2.1-create-bastion
+        cd ./2-create-network
         terraform init
-        terraform destroy -var="AWS_SSH_PRIVATE_KEY='hi'" -auto-approve
+        terraform destroy -auto-approve

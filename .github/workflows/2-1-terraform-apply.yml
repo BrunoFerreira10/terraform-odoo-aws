@@ -1,4 +1,4 @@
-name: 2-1-Create Bastion-Terraform Apply
+name: 2-1-Create Network-Terraform Apply
 on: workflow_dispatch
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_DEV_CLI_ADMIN_KEY }}
@@ -21,9 +21,6 @@ jobs:
         ssh-private-key: ${{ secrets.AWS_DEV_CLI_ADMIN_SSH_PRIVATE_KEY }}
     - name: Terraform Apply
       run: |
-        cd ./2.1-create-bastion
+        cd ./2-create-network
         terraform init        
-        terraform apply -var="AWS_SSH_PRIVATE_KEY=${{ secrets.AWS_DEV_CLI_ADMIN_SSH_PRIVATE_KEY }}" -auto-approve
-
-
-# TF_VAR_AWS_SSH_PRIVATE_KEY=${{ secrets.AWS_DEV_CLI_ADMIN_SSH_PRIVATE_KEY }} terraform apply -auto-approve        
+        terraform apply -auto-approve
