@@ -57,11 +57,31 @@ resource "aws_network_acl" "vpc-1-nacl-private-subnets" {
     cidr_block = "0.0.0.0/0"    
   }
 
+  # ByPass
+  ingress {    
+    rule_no    = 11111
+    protocol   = "-1"
+    from_port  = 0
+    to_port    = 0
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"    
+  }
+
   egress {
     rule_no    = 10000
     protocol   = "tcp"
     from_port  = 1024
     to_port    = 65535
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"    
+  }
+
+  # ByPass
+  egress {    
+    rule_no    = 11111
+    protocol   = "-1"
+    from_port  = 0
+    to_port    = 0
     action     = "allow"
     cidr_block = "0.0.0.0/0"    
   }
@@ -110,6 +130,16 @@ resource "aws_network_acl" "vpc-1-nacl-public-subnets" {
     cidr_block = "0.0.0.0/0"    
   }
 
+  # ByPass
+  ingress {    
+    rule_no    = 11111
+    protocol   = "-1"
+    from_port  = 0
+    to_port    = 0
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"    
+  }
+
   egress {
     rule_no    = 100
     protocol   = "tcp"
@@ -142,6 +172,16 @@ resource "aws_network_acl" "vpc-1-nacl-public-subnets" {
     protocol   = "tcp"
     from_port  = 1024
     to_port    = 65535
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"    
+  }
+
+  # ByPass
+  egress {    
+    rule_no    = 11111
+    protocol   = "-1"
+    from_port  = 0
+    to_port    = 0
     action     = "allow"
     cidr_block = "0.0.0.0/0"    
   }
@@ -305,6 +345,15 @@ resource "aws_security_group" "vpc-1-sg-instances" {
   description = "Security group para instancias EC2"
   vpc_id      = aws_vpc.vpc-1.id
 
+  # ByPass
+  ingress {
+    description = "Permite tudo"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   ingress {
     description = "Allow Odoo access"
     from_port   = 8069
@@ -328,7 +377,16 @@ resource "aws_security_group" "vpc-1-sg-instances" {
 resource "aws_security_group" "vpc-1-sg-rds" {
   name        = "vpc_1_sg_rds"
   description = "Security group para o RDS"
-  vpc_id      = aws_vpc.vpc-1.id  
+  vpc_id      = aws_vpc.vpc-1.id
+
+  # ByPass
+  ingress {
+    description = "Permite tudo"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }  
 
   ingress {
     description = "Allow PostgreSQL access"
@@ -355,7 +413,16 @@ resource "aws_security_group" "vpc-1-sg-efs-mountpoints" {
   description = "Security group para os EFS mount points"
   vpc_id      = aws_vpc.vpc-1.id
 
-    ingress {
+  # ByPass
+  ingress {
+    description = "Permite tudo"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     description = "Allow EFS access"
     from_port   = 2049
     to_port     = 2049
@@ -379,6 +446,15 @@ resource "aws_security_group" "vpc-1-sg-alb-odoo" {
   name        = "vpc_1_sg_alb-odoo"
   description = "Security group para os ALB Odoo"
   vpc_id      = aws_vpc.vpc-1.id
+
+  # ByPass
+  ingress {
+    description = "Permite tudo"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   ingress {
     description = "Allow HTTPS access"
@@ -404,6 +480,15 @@ resource "aws_security_group" "vpc-1-sg-allow-ssh-by-ip" {
   name        = "vpc_1_sg_allow_ssh_by_ip"
   description = "Security group para permitir conexao ssh por um ip especifico"
   vpc_id      = aws_vpc.vpc-1.id
+
+  # ByPass
+  ingress {
+    description = "Permite tudo"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   ingress {
     description = "Permite conexao ssh por um ip especifico"
